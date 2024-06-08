@@ -1,6 +1,6 @@
-# Ghidra - Headless Scripts (Java)
+# Ghidra - Scripts (Java)
 
-Headless Scripts for Ghidra's Headless Analyzer written in Java for Automated Disassembly.
+Ghidra scripts in Java for disassembly.
 
 ### Headless Analyzer
 
