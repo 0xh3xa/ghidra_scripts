@@ -1,4 +1,5 @@
 from ghidra.program.model.symbol import RefType
+import os
 
 def extract_function_calls():
     program = currentProgram
@@ -6,18 +7,15 @@ def extract_function_calls():
     
     function_calls = {}
     
-    # Iterate over all functions in the program
     function_iterator = listing.getFunctions(True)
     while function_iterator.hasNext():
         function = function_iterator.next()
         function_name = function.getName()
         function_calls[function_name] = []
 
-        # Iterate over all instructions in the function
         instructions = listing.getInstructions(function.getBody(), True)
         for instruction in instructions:
             if instruction.getFlowType().isCall():
-                # Get the called function
                 references = instruction.getReferencesFrom()
                 for reference in references:
                     if reference.getReferenceType() == RefType.UNCONDITIONAL_CALL:
@@ -28,13 +26,27 @@ def extract_function_calls():
 
     return function_calls
 
-def print_function_calls(function_calls):
-    for caller, callees in function_calls.items():
-        for callee in callees:
-            print(caller + '->' + callee)
+def write_function_calls_to_file(function_calls, filename):
+    with open(filename, 'w') as file:
+        for caller, callees in function_calls.items():
+            for callee in callees:
+                file.write(caller + '->' + callee + '\n')
 
 def main():
     function_calls = extract_function_calls()
-    print_function_calls(function_calls)
+
+    program_path = currentProgram.getExecutablePath()
+    base_name = os.path.basename(os.path.splitext(program_path)[0])
+    dir_name = os.path.dirname(program_path)
+    
+    output_dir = os.path.join(dir_name, 'control-flow-graph')
+
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+
+    output_filename = os.path.join(output_dir, base_name + '.cfg')
+
+    write_function_calls_to_file(function_calls, output_filename)
+    print("Function calls written to {}".format(output_filename))
 
 main()

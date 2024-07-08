@@ -11,7 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class PE2Assembly  extends GhidraScript {
+public class Pe2Assembly  extends GhidraScript {
 
     @Override
     public void run() throws Exception {
